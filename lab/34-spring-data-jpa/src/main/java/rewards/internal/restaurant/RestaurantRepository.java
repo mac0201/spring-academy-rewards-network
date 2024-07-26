@@ -9,7 +9,7 @@ import org.springframework.data.repository.Repository;
  *
  * Objects returned by this repository are guaranteed to be fully-initialized and ready to use.
  */
-// TODO-06: Alter this interface to extend a proper Spring Data interface.
+// -06: Alter this interface to extend a proper Spring Data interface.
 // - The method name also needs refactoring (renaming) to use Spring Data finder
 //   naming conventions so Spring Data will implement it automatically for you.
 public interface RestaurantRepository extends Repository<Restaurant, Long> {
