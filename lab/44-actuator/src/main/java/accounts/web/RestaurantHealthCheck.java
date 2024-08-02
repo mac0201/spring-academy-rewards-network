@@ -1,7 +1,13 @@
 package accounts.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.stereotype.Component;
+import rewards.internal.restaurant.RestaurantRepository;
+
 /**
- * TODO-16a: Create custom health indicator
+ * -16a: Create custom health indicator
  * - Make this class implement HealthIndicator interface
  * - Make this class a component
  * - Inject RestaurantRepository through constructor injection
@@ -9,13 +15,35 @@ package accounts.web;
  *   (no restaurants) or UP otherwise. (Note that RestaurantRepository
  *   has a method that returns number of restaurants.)
  */
-public class RestaurantHealthCheck {
+@Component
+public class RestaurantHealthCheck implements HealthIndicator {
 
+    private final RestaurantRepository restaurantRepository;
+
+    @Autowired
+    public RestaurantHealthCheck(RestaurantRepository restaurantRepository) {
+        this.restaurantRepository = restaurantRepository;
+    }
+
+    @Override
+    public Health health() {
+        long count = restaurantRepository.getRestaurantCount();
+        if (count == 0) {
+//            return Health.down().withDetail("Reason", "Restaurant repository is empty").build();
+
+            return Health
+                    .status("NO_RESTAURANTS")
+                    .withDetail("Reason", "Restaurant repository is empty")
+                    .build();
+
+        }
+        return Health.up().build();
+    }
 }
 
 
 /**
- * TODO-25 (Optional): Experiment with HealthIndicator above
+ * -25 (Optional): Experiment with HealthIndicator above
  * - Change "spring.sql.init.data-locations" property in the
  *   "application.properties" file back to use "data-no-restaurants.sql"
  * - Include the restaurant count as extra detail when DOWN state.
